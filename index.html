@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exata — Dashboard (Dark Glass)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --exata-green: #0b8378; }
+    .brand { color: var(--exata-green); }
+    .ring-brand { --tw-ring-color: var(--exata-green); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 text-gray-100 min-h-screen flex">
+
+  <!-- Sidebar (glass) -->
+  <aside id="sidebar"
+    class="w-72 bg-white/10 backdrop-blur-xl border-r border-white/20 p-5 flex flex-col transition-all duration-300">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center gap-3">
+        <!-- troque pelo caminho da sua logo -->
+        <img src="logo-exata.png" alt="Exata" class="h-9 object-contain"/>
+      </div>
+      <button onclick="toggleSidebar()" class="text-gray-300 hover:text-white" title="Ocultar">✖</button>
+    </div>
+
+    <nav class="flex-1 space-y-1 text-sm">
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[color:var(--exata-green)] text-white font-medium">
+        🏠 <span>Dashboard</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/15 transition">
+        📩 <span>Tickets</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/15 transition">
+        📊 <span>Relatórios</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/15 transition">
+        ⚙️ <span>Configurações</span>
+      </a>
+    </nav>
+
+    <div class="mt-8 pt-4 border-t border-white/10">
+      <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/15 transition">
+        🚪 <span>Sair</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div id="main" class="flex-1 flex flex-col transition-all duration-300">
+
+    <!-- Header (glass) -->
+    <header class="bg-white/10 backdrop-blur-xl border-b border-white/20 px-6 py-4">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" class="lg:hidden block text-gray-300 hover:text-white" title="Menu">☰</button>
+          <h1 class="text-lg font-semibold tracking-wide">Dashboard</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <input id="q" type="text" placeholder="Buscar por assunto, usuário..."
+                 class="bg-white/10 backdrop-blur-lg text-gray-200 px-4 py-2 rounded-xl w-72 focus:outline-none focus:ring-2 ring-brand placeholder-gray-400"/>
+          <button class="relative text-gray-200 hover:text-white" title="Notificações">🔔
+            <span class="absolute -top-1 -right-2 bg-red-600 text-xs px-1.5 rounded-full">3</span>
+          </button>
+          <img src="https://i.pravatar.cc/40" alt="avatar"
+               class="w-10 h-10 rounded-full border-2 border-[color:var(--exata-green)]/70"/>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="p-6 space-y-6">
+
+      <!-- KPIs (glass cards) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 shadow-sm">
+          <div class="text-sm text-gray-300">Abertos</div>
+          <div id="kpi-open" class="text-3xl font-semibold mt-1">0</div>
+          <div id="kpi-open-delta" class="text-xs text-gray-400 mt-1">—</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 shadow-sm">
+          <div class="text-sm text-gray-300">Aguardando Retorno</div>
+          <div id="kpi-waiting" class="text-3xl font-semibold mt-1">0</div>
+          <div id="kpi-waiting-delta" class="text-xs text-gray-400 mt-1">—</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 shadow-sm">
+          <div class="text-sm text-gray-300">Vencidos (SLA)</div>
+          <div id="kpi-overdue" class="text-3xl font-semibold mt-1">0</div>
+          <div id="kpi-overdue-delta" class="text-xs text-gray-400 mt-1">—</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 shadow-sm">
+          <div class="text-sm text-gray-300">Resolvidos (30d)</div>
+          <div id="kpi-resolved" class="text-3xl font-semibold mt-1">0</div>
+          <div id="kpi-resolved-delta" class="text-xs text-gray-400 mt-1">—</div>
+        </div>
+      </section>
+
+      <!-- Filtros (glass) -->
+      <section class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl p-4 shadow-sm">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-300">Status:</span>
+            <select id="f-status" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-100">
+              <option value="">Todos</option>
+              <option value="OPEN">Aberto</option>
+              <option value="WAITING">Aguardando Retorno</option>
+              <option value="OVERDUE">Vencido</option>
+              <option value="RESOLVED">Resolvido</option>
+              <option value="CLOSED">Fechado</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-300">Prioridade:</span>
+            <select id="f-priority" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-100">
+              <option value="">Todas</option>
+              <option value="LOW">Baixa</option>
+              <option value="MEDIUM">Média</option>
+              <option value="HIGH">Alta</option>
+              <option value="URGENT">Urgente</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-300">Período:</span>
+            <input id="f-from" type="date" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-100">
+            <span class="text-gray-500">—</span>
+            <input id="f-to" type="date" class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-gray-100">
+          </div>
+          <button id="btn-clear" class="ml-auto px-3 py-2 rounded-lg border border-white/20 hover:bg-white/10">Limpar</button>
+        </div>
+      </section>
+
+      <!-- Tabela (glass) -->
+      <section class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-white/10 text-gray-300">
+              <tr class="[&>th]:px-4 [&>th]:py-3 [&>th]:text-left">
+                <th class="cursor-pointer" data-sort="id">#</th>
+                <th class="cursor-pointer" data-sort="subject">Assunto</th>
+                <th class="cursor-pointer" data-sort="owner">Usuário</th>
+                <th class="cursor-pointer" data-sort="priority">Prioridade</th>
+                <th class="cursor-pointer" data-sort="status">Status</th>
+                <th class="cursor-pointer" data-sort="updatedAt">Atualizado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="rows" class="divide-y divide-white/10"></tbody>
+          </table>
+        </div>
+
+        <!-- Paginação -->
+        <div class="flex items-center justify-between px-4 py-3 bg-white/5 border-t border-white/10">
+          <div id="page-info" class="text-xs text-gray-400">—</div>
+          <div class="flex items-center gap-2">
+            <button id="prev" class="px-3 py-1.5 rounded border border-white/20 hover:bg-white/10 disabled:opacity-40">Anterior</button>
+            <button id="next" class="px-3 py-1.5 rounded border border-white/20 hover:bg-white/10 disabled:opacity-40">Próximo</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // ---------------------- DATA MOCK (simula API) ----------------------
+    const PRIORITY_BADGE = {
+      LOW: 'bg-emerald-400/15 text-emerald-300 ring-1 ring-inset ring-emerald-500/30',
+      MEDIUM: 'bg-amber-400/15 text-amber-300 ring-1 ring-inset ring-amber-500/30',
+      HIGH: 'bg-orange-400/15 text-orange-300 ring-1 ring-inset ring-orange-500/30',
+      URGENT: 'bg-red-400/15 text-red-300 ring-1 ring-inset ring-red-500/30'
+    };
+    const STATUS_BADGE = {
+      OPEN: 'bg-sky-400/15 text-sky-300 ring-1 ring-inset ring-sky-500/30',
+      WAITING: 'bg-violet-400/15 text-violet-300 ring-1 ring-inset ring-violet-500/30',
+      OVERDUE: 'bg-rose-400/15 text-rose-300 ring-1 ring-inset ring-rose-500/30',
+      RESOLVED: 'bg-gray-400/15 text-gray-300 ring-1 ring-inset ring-gray-400/30',
+      CLOSED: 'bg-gray-500/15 text-gray-300 ring-1 ring-inset ring-gray-500/30'
+    };
+
+    const users = ['Ana','Bruno','Carla','Diego','Erika','Fábio','Gustavo','Helena'];
+    const subjects = [
+      'Erro ao logar no app','Solicitar reativação de cadastro','Integração com ERP falhando',
+      'Atualizar endereço de cobrança','Dúvida sobre fatura','API retornando 500',
+      'Bug no formulário de cupom','Export CSV não baixa','Acesso negado após troca de senha',
+      'Solicitação de feature: campo ritual','Como redefinir senha?','Relatório lento'
+    ];
+    function rnd(a){ return a[Math.floor(Math.random()*a.length)] }
+    function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x }
+    const now = new Date();
+
+    const TICKETS = Array.from({length: 83}).map((_,i)=>({
+      id: 1000+i,
+      subject: rnd(subjects),
+      owner: rnd(users),
+      priority: rnd(['LOW','MEDIUM','HIGH','URGENT']),
+      status: rnd(['OPEN','WAITING','RESOLVED','OPEN','OPEN','WAITING','OVERDUE']),
+      updatedAt: addDays(now, -Math.floor(Math.random()*20)),
+      dueAt: Math.random()>0.6 ? addDays(now, -Math.floor(Math.random()*5)) : addDays(now, Math.floor(Math.random()*5))
+    }));
+
+    // ---------------------- STATE ----------------------
+    const state = {
+      q: '', status: '', priority: '', from: '', to: '',
+      sortBy: 'updatedAt', sortDir: 'desc',
+      page: 1, perPage: 10,
+      data: TICKETS
+    };
+
+    // ---------------------- UI HELPERS ----------------------
+    const el = s => document.querySelector(s);
+    const fmtDate = d => new Date(d).toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
+    const by = (k,dir) => (a,b)=>{
+      const A = a[k], B = b[k];
+      if (A==null && B!=null) return 1;
+      if (B==null && A!=null) return -1;
+      if (A==null && B==null) return 0;
+      return (A>B?1:A<B?-1:0) * (dir==='asc'?1:-1);
+    };
+
+    function computeKPIs(rows) {
+      const open = rows.filter(r=>r.status==='OPEN').length;
+      const wait = rows.filter(r=>r.status==='WAITING').length;
+      const over = rows.filter(r=>r.status==='OVERDUE' || (r.dueAt && new Date(r.dueAt)<now && r.status!=='RESOLVED' && r.status!=='CLOSED')).length;
+      const last30 = rows.filter(r => (now - new Date(r.updatedAt)) <= (30*24*60*60*1000) && r.status==='RESOLVED').length;
+      el('#kpi-open').textContent = open;
+      el('#kpi-waiting').textContent = wait;
+      el('#kpi-overdue').textContent = over;
+      el('#kpi-resolved').textContent = last30;
+      el('#kpi-open-delta').textContent = open>20?'+2 hoje':'estável';
+      el('#kpi-waiting-delta').textContent = wait>10?'+1 hoje':'estável';
+      el('#kpi-overdue-delta').textContent = over>5?'+1 hoje':'—';
+      el('#kpi-resolved-delta').textContent = last30>10?'+3 esta semana':'—';
+    }
+
+    function applyFilters() {
+      const q = state.q.trim().toLowerCase();
+      const f = state.data.filter(t=>{
+        const matchQ = !q || t.subject.toLowerCase().includes(q) || t.owner.toLowerCase().includes(q) || String(t.id).includes(q);
+        const matchS = !state.status || t.status===state.status;
+        const matchP = !state.priority || t.priority===state.priority;
+        const d = new Date(t.updatedAt);
+        const fromOk = !state.from || d >= new Date(state.from);
+        const toOk = !state.to || d <= addDays(new Date(state.to),1);
+        return matchQ && matchS && matchP && fromOk && toOk;
+      });
+      return f.sort(by(state.sortBy, state.sortDir));
+    }
+
+    function render() {
+      const filtered = applyFilters();
+      computeKPIs(filtered);
+
+      const total = filtered.length;
+      const pages = Math.max(1, Math.ceil(total/state.perPage));
+      state.page = Math.min(state.page, pages);
+      const start = (state.page-1)*state.perPage;
+      const slice = filtered.slice(start, start+state.perPage);
+
+      el('#page-info').textContent = `Exibindo ${start+1}–${Math.min(start+state.perPage,total)} de ${total}`;
+      el('#prev').disabled = state.page<=1;
+      el('#next').disabled = state.page>=pages;
+
+      const rows = slice.map(t=>{
+        const overdue = (t.status!=='RESOLVED' && t.status!=='CLOSED' && t.dueAt && new Date(t.dueAt)<now);
+        return `
+          <tr class="hover:bg-white/5">
+            <td class="px-4 py-3 font-medium text-gray-100">#${t.id}</td>
+            <td class="px-4 py-3">
+              <div class="font-medium text-gray-100">${t.subject}</div>
+              <div class="text-xs text-gray-400">venc.: ${t.dueAt ? new Date(t.dueAt).toLocaleDateString('pt-BR') : '—'}</div>
+            </td>
+            <td class="px-4 py-3 text-gray-200">${t.owner}</td>
+            <td class="px-4 py-3">
+              <span class="px-2 py-1 rounded-full text-xs ${PRIORITY_BADGE[t.priority]}">${t.priority}</span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="px-2 py-1 rounded-full text-xs ${STATUS_BADGE[overdue?'OVERDUE':t.status]}">${overdue?'OVERDUE':t.status}</span>
+            </td>
+            <td class="px-4 py-3 text-gray-200">${fmtDate(t.updatedAt)}</td>
+            <td class="px-4 py-3">
+              <button class="px-2 py-1 text-xs rounded border border-white/20 hover:bg-white/10">Ver</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      el('#rows').innerHTML = rows || `<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">Nenhum ticket encontrado.</td></tr>`;
+    }
+
+    // ---------------------- EVENTS ----------------------
+    function toggleSidebar(){
+      const s = document.getElementById('sidebar');
+      const m = document.getElementById('main');
+      if (s.classList.contains('hidden')) {
+        s.classList.remove('hidden'); m.classList.remove('w-full');
+      } else {
+        s.classList.add('hidden'); m.classList.add('w-full');
+      }
+    }
+
+    document.querySelector('#q').addEventListener('input', e=>{ state.q = e.target.value; state.page=1; render(); });
+    document.querySelector('#f-status').addEventListener('change', e=>{ state.status = e.target.value; state.page=1; render(); });
+    document.querySelector('#f-priority').addEventListener('change', e=>{ state.priority = e.target.value; state.page=1; render(); });
+    document.querySelector('#f-from').addEventListener('change', e=>{ state.from = e.target.value; state.page=1; render(); });
+    document.querySelector('#f-to').addEventListener('change', e=>{ state.to = e.target.value; state.page=1; render(); });
+    document.querySelector('#btn-clear').addEventListener('click', ()=>{
+      state.q=''; state.status=''; state.priority=''; state.from=''; state.to=''; state.page=1;
+      document.querySelector('#q').value=''; document.querySelector('#f-status').value='';
+      document.querySelector('#f-priority').value=''; document.querySelector('#f-from').value='';
+      document.querySelector('#f-to').value=''; render();
+    });
+    document.querySelector('#prev').addEventListener('click', ()=>{ state.page=Math.max(1,state.page-1); render(); });
+    document.querySelector('#next').addEventListener('click', ()=>{
+      const total = applyFilters().length;
+      const pages = Math.max(1, Math.ceil(total/state.perPage));
+      state.page=Math.min(pages,state.page+1); render();
+    });
+    document.querySelectorAll('th[data-sort]').forEach(th=>{
+      th.addEventListener('click', ()=>{
+        const key = th.getAttribute('data-sort');
+        if (state.sortBy===key) state.sortDir = state.sortDir==='asc'?'desc':'asc';
+        else { state.sortBy=key; state.sortDir='asc'; }
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
